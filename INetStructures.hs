@@ -1,0 +1,29 @@
+module INetStructures (INet(..), Term(Tree,Wire), Connection(..), Rule(..)) where
+
+-- Datatypes 
+
+data INet = INet [Term] [Connection]
+
+data Term = Tree String [Term] | Wire String deriving Eq
+data Connection = Connection Term Term
+
+data Rule = Rule (String,String) (Int -> Term -> Term -> [Connection])
+
+instance Show INet where
+    show :: INet -> String
+    show (INet terms connections) = sterms ++ "|" ++ sconnections
+        where
+            sterms = tail $ init $ show terms
+            sconnections = tail $ init $ show connections
+
+instance Show Term where
+    show :: Term -> String
+    show (Tree s terms) = if isNullary then s else s ++ "(" ++ sterms ++ ")"
+        where
+            isNullary = length terms == 0
+            sterms = tail $ init $ show terms
+    show (Wire s) = s
+
+instance Show Connection where
+    show :: Connection -> String
+    show (Connection a b) = show a ++ "==" ++ show b
