@@ -1,4 +1,4 @@
-module NetParser (toINet,toRules) where
+module NetParser (toINet,toRules,lafInteractionCombinatorsRules) where
 
 import INetStructures
 import Text.Megaparsec.Char
