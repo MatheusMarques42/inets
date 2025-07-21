@@ -1,6 +1,7 @@
 module Main where
-import INets
-import NetParser
+import INets ( runINet )
+import NetParser ( toINet )
+import StdRules (lafInteractionCombinatorsRules)
 
 main :: IO ()
 main = do
