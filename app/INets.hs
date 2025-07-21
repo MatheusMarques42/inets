@@ -1,8 +1,6 @@
 module INets (runINet) where
 
-import INetStructures
-
-import NetParser (toINet,toRules)
+import INetStructures ( Rule(..), Connection(..), Term(..), INet(..) )
 
 -- INet functionality
 
@@ -23,7 +21,7 @@ indirection (Rule (s1,s2) f) i (Tree st1 w1) (Tree st2 w2)
 indirection _ _ _ _ = []
 
 step :: Int -> [Rule] -> INet -> INet
-step _ _ (INet terms []) = (INet terms [])
+step _ _ (INet terms []) = INet terms []
 step _ _ (INet terms ((Connection (Wire w) term):cs)) =
     INet (map (termSub (Wire w) term) terms) (map (link (Wire w) term) cs)
 

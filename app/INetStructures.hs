@@ -18,7 +18,7 @@ instance Show INet where
 instance Show Term where
     show (Tree s terms) = if isNullary then s else s ++ "(" ++ sterms ++ ")"
         where
-            isNullary = length terms == 0
+            isNullary = null terms
             sterms = tail $ init $ show terms
     show (Wire s) = s
 

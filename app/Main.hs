@@ -1,7 +1,6 @@
 module Main where
 import INets
 import NetParser
-import INetStructures
 
 main :: IO ()
 main = do
