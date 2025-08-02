@@ -7,6 +7,6 @@ main :: IO ()
 main = do
   input <- getLine
   let net = toINet input
-  let out = runINet 0 lafInteractionCombinatorsRules net
+  let out = runINet lafInteractionCombinatorsRules net
   print out
 

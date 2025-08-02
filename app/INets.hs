@@ -20,20 +20,6 @@ indirection (Rule (s1,s2) f) i (Tree st1 w1) (Tree st2 w2)
   | otherwise = []
 indirection _ _ _ _ = []
 
-step :: Int -> [Rule] -> INet -> INet
-step _ _ (INet terms []) = INet terms []
-step _ _ (INet terms ((Connection (Wire w) term):cs)) =
-    INet (map (termSub (Wire w) term) terms) (map (link (Wire w) term) cs)
-
-step _ _ (INet terms ((Connection term (Wire w)):cs)) =
-    INet (map (termSub (Wire w) term) terms) (map (link (Wire w) term) cs)
-
-step i rs (INet terms ((Connection t1 t2):cs)) =
-    INet terms ((concat [indirection r i t1 t2| r<-rs])++cs)
-
-combineConn :: Connection -> INet -> INet
-combineConn c (INet ts cs) = INet ts (c:cs)
-
 deepSearch :: Term -> Term -> Bool
 deepSearch (Wire a) (Wire b) = a==b
 deepSearch (Tree s1 as) (Tree s2 bs) = Tree s1 as == Tree s2 bs
@@ -43,15 +29,29 @@ deepSearch (Wire b) (Tree t (a:as)) = case a of
     (Tree _ xs) -> any (deepSearch (Wire b)) xs || deepSearch (Wire b) (Tree t as)
 deepSearch (Wire _) (Tree _ []) = False
 
-
 isCycle :: Connection -> Bool
 isCycle (Connection (Wire a) (Wire b)) = a==b
 isCycle (Connection (Tree _ _) (Tree _ _)) = False
 isCycle (Connection (Tree s xs) (Wire y)) = isCycle (Connection (Wire y) (Tree s xs))
 isCycle (Connection (Wire y) (Tree s xs)) = deepSearch (Wire y) (Tree s xs)
 
-runINet :: Int -> [Rule] -> INet -> INet
-runINet _ _ (INet t []) = INet t []
-runINet i rs (INet t (c:cs)) = if isCycle c 
-    then combineConn c $ runINet i rs (INet t cs)
-    else runINet (i+1) rs (step i rs (INet t (c:cs)))
+step :: [Connection] -> Int -> [Rule] -> INet -> (INet,[Connection])
+step cycles _ _ (INet ts []) = (INet ts [],cycles)
+step cycles _ _ (INet ts ((Connection (Wire w) t):cs)) =(
+    INet (map (termSub (Wire w) t) ts) (map (link (Wire w) t) cs),
+    map (link (Wire w) t) cycles
+    )
+step cycles i rs (INet ts (Connection t (Wire w): cs)) = step cycles i rs (INet ts (Connection (Wire w) t: cs))
+step cycles i rs (INet ts ((Connection t1 t2):cs)) =
+    (INet ts ((concat [indirection r i t1 t2| r<-rs])++cs),cycles) 
+
+auxRunINet :: [Connection] -> Int -> [Rule] -> INet -> INet
+auxRunINet cycles _ _ (INet ts []) = INet ts cycles
+auxRunINet cycles i rs (INet ts (c:cs)) = if isCycle c
+    then auxRunINet (c:cycles) i rs (INet ts cs)
+    else auxRunINet cyclesF (i+1) rs newNet
+    where
+        (newNet,cyclesF) = step cycles i rs (INet ts (c:cs))
+
+runINet :: [Rule] -> INet -> INet
+runINet = auxRunINet [] 0
