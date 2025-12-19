@@ -76,3 +76,16 @@ toLambdaNet s = case terms of
     lambda = parse lambdaP "" s
     terms = lambda >>= \x -> Right (lambdaToTerm 1 x)
 
+-- lambdaSub :: LTerm -> LTerm -> LTerm -> LTerm
+-- lambdaSub a b (Symbol s) = if a == Symbol s then b else Symbol s
+-- lambdaSub a b (Application t1 t2) = Application (lambdaSub a b t1) (lambdaSub a b t2)
+-- lambdaSub a b (Function x t) = Function x (lambdaSub a b t)
+
+-- netToLambda :: [String] -> (LTerm -> LTerm) -> Term -> LTerm
+-- netToLambda ls fn (Wire w) = fn (Symbol w)
+-- netToLambda (l:ls) fn (Tree _ ts) = case t0 of
+--   Wire s -> Function l (netToLambda ls (lambdaSub (Symbol s) (Symbol l).fn) t1) 
+--   Tree _ terms -> Function l ()
+--   where
+--     t0 = head ts
+--     t1 = ts!!1

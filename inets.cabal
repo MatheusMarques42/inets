@@ -59,8 +59,8 @@ executable inets
 
     -- .hs or .lhs file containing the Main module.
     main-is:          Main.hs
-    
-    other-modules: INets, NetParser, INetStructures, Lambda
+
+    other-modules: INets, NetParser, INetStructures, Lambda, UnaryAritmetics, StdRules
     -- Modules included in this executable, other than Main.
     -- other-modules:
 
@@ -68,7 +68,7 @@ executable inets
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    
+    build-depends:
       base ^>=4.18.3.0,
       megaparsec ^>= 9.7.0,
       data-hash ^>= 0.2.0.1
