@@ -24,3 +24,6 @@ instance Show Term where
 
 instance Show Connection where
     show (Connection a b) = show a ++ "==" ++ show b
+
+instance Show Rule where
+    show (Rule (s1, s2) _) = s1 ++ " X " ++ s2 

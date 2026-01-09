@@ -1,4 +1,4 @@
-module INets (runINet) where
+module INets (runINet, runPrinting) where
 
 import INetStructures ( Rule(..), Connection(..), Term(..), INet(..) )
 
@@ -55,3 +55,15 @@ auxRunINet cycles i rs (INet ts (c:cs)) = if isCycle c
 
 runINet :: [Rule] -> INet -> INet
 runINet = auxRunINet [] 0
+
+
+auxRunPrinting :: [Connection] -> Int -> [Rule] -> INet -> String
+auxRunPrinting cycles _ _ (INet ts []) = show $ INet ts cycles
+auxRunPrinting cycles i rs (INet ts (c:cs)) = if isCycle c
+    then auxRunPrinting (c:cycles) i rs (INet ts cs)
+    else show (INet ts (c:cs)) ++ "\n\n" ++ auxRunPrinting cyclesF (i+1) rs newNet
+    where
+        (newNet,cyclesF) = step cycles i rs (INet ts (c:cs))
+
+runPrinting :: [Rule] -> INet -> String
+runPrinting = auxRunPrinting [] 0 
